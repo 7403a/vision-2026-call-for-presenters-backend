@@ -1,7 +1,12 @@
 // Define the structure of your environment variables, including the D1 database binding.
 export interface Env {
 	DB: D1Database;
+    // For production, you should store your API key as a secret in Cloudflare
+    // API_KEY: string;
 }
+
+// The secret API key
+const API_KEY = "a5d1bdba-ee88-46f2-a62e-2d0edb159a21";
 
 // Helper function to return a JSON response
 const jsonResponse = (data: unknown, status = 200) => {
@@ -20,6 +25,14 @@ const errorResponse = (message: string, status = 400) => {
 
 export default {
 	async fetch(request: Request, env: Env): Promise<Response> {
+        // --- API Key Authentication ---
+        // In a real app, use `env.API_KEY` after setting it as a secret in your Worker's settings
+        const providedKey = request.headers.get('X-API-Key');
+        if (providedKey !== API_KEY) {
+            return errorResponse('Unauthorized. Invalid or missing API Key.', 401);
+        }
+        // --- End of Authentication ---
+
 		const { pathname } = new URL(request.url);
 		const pathParts = pathname.split('/').filter(p => p); // e.g., ['api', 'presenters', '1']
 
