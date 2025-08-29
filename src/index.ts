@@ -8,11 +8,18 @@ export interface Env {
 // The secret API key
 const API_KEY = "a5d1bdba-ee88-46f2-a62e-2d0edb159a21";
 
+const corsHeaders = {
+  'Access-Control-Allow-Headers': '*', // What headers are allowed. * is wildcard. Instead of using '*', you can specify a list of specific headers that are allowed, such as: Access-Control-Allow-Headers: X-Requested-With, Content-Type, Accept, Authorization.
+  'Access-Control-Allow-Methods': 'GET, POST, PUT, DELETE, OPTIONS',
+  'Access-Control-Allow-Origin': '*', // This is URLs that are allowed to access the server. * is the wildcard character meaning any URL can.
+}
+
 // Helper function to return a JSON response
 const jsonResponse = (data: unknown, status = 200) => {
 	return new Response(JSON.stringify(data, null, 2), {
 		headers: {
 			'content-type': 'application/json;charset=UTF-8',
+			...corsHeaders
 		},
 		status: status,
 	});
@@ -23,11 +30,6 @@ const errorResponse = (message: string, status = 400) => {
 	return jsonResponse({ error: message }, status);
 };
 
-const corsHeaders = {
-  'Access-Control-Allow-Headers': '*', // What headers are allowed. * is wildcard. Instead of using '*', you can specify a list of specific headers that are allowed, such as: Access-Control-Allow-Headers: X-Requested-With, Content-Type, Accept, Authorization.
-  'Access-Control-Allow-Methods': 'GET, POST, PUT, DELETE, OPTIONS',
-  'Access-Control-Allow-Origin': '*', // This is URLs that are allowed to access the server. * is the wildcard character meaning any URL can.
-}
 export default {
 	async fetch(request: Request, env: Env): Promise<Response> {
 		if (request.method === "OPTIONS") {
