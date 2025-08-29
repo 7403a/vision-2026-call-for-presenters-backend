@@ -1,0 +1,16 @@
+{
+  "compatibility_date": "2025-04-01",
+  "main": "src/index.ts",
+  "name": "vision-2026-call-for-presenters-backend",
+  "upload_source_maps": true,
+  "d1_databases": [
+    {
+      "binding": "DB",
+      "database_id": "ef5fd5ea-ed99-41d0-a769-3d56c81249bd",
+      "database_name": "presenters"
+    }
+  ],
+  "observability": {
+    "enabled": true
+  }
+}
