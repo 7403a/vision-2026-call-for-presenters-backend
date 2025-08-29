@@ -1,59 +1,84 @@
-# Worker + D1 Database
+# Worker + D1 Database API Example
 
-[![Deploy to Cloudflare](https://deploy.workers.cloudflare.com/button)](https://deploy.workers.cloudflare.com/?url=https://github.com/cloudflare/templates/tree/main/d1-template)
-
-![Worker + D1 Template Preview](https://imagedelivery.net/wSMYJvS3Xw-n339CbDyDIA/cb7cb0a9-6102-4822-633c-b76b7bb25900/public)
-
-<!-- dash-content-start -->
-
-D1 is Cloudflare's native serverless SQL database ([docs](https://developers.cloudflare.com/d1/)). This project demonstrates using a Worker with a D1 binding to execute a SQL statement. A simple frontend displays the result of this query:
-
-```SQL
-SELECT * FROM comments LIMIT 3;
-```
-
-The D1 database is initialized with a `comments` table and this data:
-
-```SQL
-INSERT INTO comments (author, content)
-VALUES
-    ('Kristian', 'Congrats!'),
-    ('Serena', 'Great job!'),
-    ('Max', 'Keep up the good work!')
-;
-```
-
-> [!IMPORTANT]
-> When using C3 to create this project, select "no" when it asks if you want to deploy. You need to follow this project's [setup steps](https://github.com/cloudflare/templates/tree/main/d1-template#setup-steps) before deploying.
-
-<!-- dash-content-end -->
-
-## Getting Started
-
-Outside of this repo, you can start a new project with this template using [C3](https://developers.cloudflare.com/pages/get-started/c3/) (the `create-cloudflare` CLI):
+This project demonstrates a Cloudflare Worker with a D1 database binding for a sample "presenters" API. All endpoints require the following API key header:
 
 ```
-npm create cloudflare@latest -- --template=cloudflare/templates/d1-template
+X-API-Key: a5d1bdba-ee88-46f2-a62e-2d0edb159a21
 ```
 
-A live public deployment of this template is available at [https://d1-template.templates.workers.dev](https://d1-template.templates.workers.dev)
+Replace `https://your-worker-url` in the examples below with your deployed Worker URL, or use `http://localhost:8787` if running locally.
 
-## Setup Steps
+## Endpoints
 
-1. Install the project dependencies with a package manager of your choice:
+- `GET    /api/presenters`           → Get all presenters
+- `GET    /api/presenters/:id`       → Get a single presenter by ID
+- `POST   /api/presenters`           → Create a presenter (fields: name, topic, bio)
+- `PUT    /api/presenters/:id`       → Update a presenter by ID (fields: name, topic, bio)
+- `DELETE /api/presenters/:id`       → Delete a presenter by ID
+
+## Example Usage (ready to copy)
+
+### Get all presenters
+
+```sh
+curl -X GET https://your-worker-url/api/presenters \
+  -H "X-API-Key: a5d1bdba-ee88-46f2-a62e-2d0edb159a21"
+```
+
+### Get presenter with ID 1
+
+```sh
+curl -X GET https://your-worker-url/api/presenters/1 \
+  -H "X-API-Key: a5d1bdba-ee88-46f2-a62e-2d0edb159a21"
+```
+
+### Add a presenter
+
+```sh
+curl -X POST https://your-worker-url/api/presenters \
+  -H "X-API-Key: a5d1bdba-ee88-46f2-a62e-2d0edb159a21" \
+  -H "Content-Type: application/json" \
+  --data '{"name":"Ada Lovelace", "topic":"Computing", "bio":"The first programmer."}'
+```
+
+### Update presenter with ID 1
+
+```sh
+curl -X PUT https://your-worker-url/api/presenters/1 \
+  -H "X-API-Key: a5d1bdba-ee88-46f2-a62e-2d0edb159a21" \
+  -H "Content-Type: application/json" \
+  --data '{"name":"Ada Lovelace", "topic":"Math & Computing", "bio":"Pioneer in computer science."}'
+```
+
+### Delete presenter with ID 1
+
+```sh
+curl -X DELETE https://your-worker-url/api/presenters/1 \
+  -H "X-API-Key: a5d1bdba-ee88-46f2-a62e-2d0edb159a21"
+```
+
+---
+
+All endpoints return JSON. The sample API key and fields are hardcoded for demonstration.
+
+## Setup & Deploy
+
+Follow the instructions below to set up and deploy your Worker and D1 database.
+
+1. Install dependencies:
    ```bash
    npm install
    ```
-2. Create a [D1 database](https://developers.cloudflare.com/d1/get-started/) with the name "d1-template-database":
+2. Create your D1 database:
    ```bash
    npx wrangler d1 create d1-template-database
    ```
-   ...and update the `database_id` field in `wrangler.json` with the new database ID.
-3. Run the following db migration to initialize the database (notice the `migrations` directory in this project):
+   Update your `wrangler.json` with the database ID.
+3. Run migrations:
    ```bash
    npx wrangler d1 migrations apply --remote d1-template-database
    ```
-4. Deploy the project!
+4. Deploy:
    ```bash
    npx wrangler deploy
    ```
