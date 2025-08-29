@@ -7,7 +7,11 @@ export interface Env {
 
 // The secret API key
 const API_KEY = "a5d1bdba-ee88-46f2-a62e-2d0edb159a21";
-
+// Allowed origins
+const ALLOWED_ORIGINS = [
+    'https://vision-2026.pages.dev',
+    'https://vision-2026.com',
+];
 // Helper function to return a JSON response
 const jsonResponse = (data: unknown, status = 200) => {
 	return new Response(JSON.stringify(data, null, 2), {
@@ -26,10 +30,12 @@ const errorResponse = (message: string, status = 400) => {
 export default {
 	async fetch(request: Request, env: Env): Promise<Response> {
 		if (request.method === 'OPTIONS') {
+            const origin = request.headers.get('Origin') || '';
+            const allowedOrigin = ALLOWED_ORIGINS.includes(origin) ? origin : ALLOWED_ORIGINS[0];
             return new Response(null, {
                 status: 200,
                 headers: {
-                    'Access-Control-Allow-Origin': 'https://vision-2026.pages.dev, https://vision-2026.com',
+                    'Access-Control-Allow-Origin': allowedOrigin,
                     'Access-Control-Allow-Methods': 'GET, POST, PUT, DELETE, OPTIONS',
                     'Access-Control-Allow-Headers': 'X-API-Key, Content-Type',
                     'Access-Control-Max-Age': '86400',
