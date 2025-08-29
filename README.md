@@ -6,7 +6,7 @@ This project demonstrates a Cloudflare Worker with a D1 database binding for a s
 X-API-Key: a5d1bdba-ee88-46f2-a62e-2d0edb159a21
 ```
 
-Replace `https://your-worker-url` in the examples below with your deployed Worker URL, or use `http://localhost:8787` if running locally.
+Replace `https://vision-2026-call-for-presenters-backend.cloudflare-one-offs.workers.dev` in the examples below with your deployed Worker URL, or use `http://localhost:8787` if running locally.
 
 ## Endpoints
 
@@ -21,21 +21,21 @@ Replace `https://your-worker-url` in the examples below with your deployed Worke
 ### Get all presenters
 
 ```sh
-curl -X GET https://your-worker-url/api/presenters \
+curl -X GET https://vision-2026-call-for-presenters-backend.cloudflare-one-offs.workers.dev/api/presenters \
   -H "X-API-Key: a5d1bdba-ee88-46f2-a62e-2d0edb159a21"
 ```
 
 ### Get presenter with ID 1
 
 ```sh
-curl -X GET https://your-worker-url/api/presenters/1 \
+curl -X GET https://vision-2026-call-for-presenters-backend.cloudflare-one-offs.workers.dev/api/presenters/1 \
   -H "X-API-Key: a5d1bdba-ee88-46f2-a62e-2d0edb159a21"
 ```
 
 ### Add a presenter
 
 ```sh
-curl -X POST https://your-worker-url/api/presenters \
+curl -X POST https://vision-2026-call-for-presenters-backend.cloudflare-one-offs.workers.dev/api/presenters \
   -H "X-API-Key: a5d1bdba-ee88-46f2-a62e-2d0edb159a21" \
   -H "Content-Type: application/json" \
   --data '{"name":"Ada Lovelace", "topic":"Computing", "bio":"The first programmer."}'
@@ -44,7 +44,7 @@ curl -X POST https://your-worker-url/api/presenters \
 ### Update presenter with ID 1
 
 ```sh
-curl -X PUT https://your-worker-url/api/presenters/1 \
+curl -X PUT https://vision-2026-call-for-presenters-backend.cloudflare-one-offs.workers.dev/api/presenters/1 \
   -H "X-API-Key: a5d1bdba-ee88-46f2-a62e-2d0edb159a21" \
   -H "Content-Type: application/json" \
   --data '{"name":"Ada Lovelace", "topic":"Math & Computing", "bio":"Pioneer in computer science."}'
@@ -53,7 +53,7 @@ curl -X PUT https://your-worker-url/api/presenters/1 \
 ### Delete presenter with ID 1
 
 ```sh
-curl -X DELETE https://your-worker-url/api/presenters/1 \
+curl -X DELETE https://vision-2026-call-for-presenters-backend.cloudflare-one-offs.workers.dev/api/presenters/1 \
   -H "X-API-Key: a5d1bdba-ee88-46f2-a62e-2d0edb159a21"
 ```
 
