@@ -25,6 +25,17 @@ const errorResponse = (message: string, status = 400) => {
 
 export default {
 	async fetch(request: Request, env: Env): Promise<Response> {
+		if (request.method === 'OPTIONS') {
+            return new Response(null, {
+                status: 200,
+                headers: {
+                    'Access-Control-Allow-Origin': 'https://vision-2026.pages.dev, https://vision-2026.com',
+                    'Access-Control-Allow-Methods': 'GET, POST, PUT, DELETE, OPTIONS',
+                    'Access-Control-Allow-Headers': 'X-API-Key, Content-Type',
+                    'Access-Control-Max-Age': '86400',
+                },
+            });
+        }
         // --- API Key Authentication ---
         // In a real app, use `env.API_KEY` after setting it as a secret in your Worker's settings
         const providedKey = request.headers.get('X-API-Key');
