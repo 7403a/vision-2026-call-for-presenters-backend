@@ -11,9 +11,9 @@ const API_KEY = "a5d1bdba-ee88-46f2-a62e-2d0edb159a21";
 const EVENT_KEY = "PÄRNU25"
 
 const corsHeaders = {
-  'Access-Control-Allow-Headers': '*', // What headers are allowed. * is wildcard. Instead of using '*', you can specify a list of specific headers that are allowed, such as: Access-Control-Allow-Head[...]
+  'Access-Control-Allow-Headers': '*',
   'Access-Control-Allow-Methods': 'GET, POST, PUT, DELETE, OPTIONS',
-  'Access-Control-Allow-Origin': '*', // This is URLs that are allowed to access the server. * is the wildcard character meaning any URL can.
+  'Access-Control-Allow-Origin': '*',
 }
 
 // Helper function to return a JSON response
@@ -32,22 +32,6 @@ const errorResponse = (message: string, status = 400) => {
 	return jsonResponse({ error: message }, status);
 };
 
-// Helper: decode incoming event key header as UTF-8
-function decodeHeaderValue(headerValue: string | null): string | null {
-    if (!headerValue) return null;
-    try {
-        // If the headerValue contains bytes (e.g. \xc4) instead of actual unicode chars,
-        // decode using TextDecoder from percent-encoding.
-        // First, encode the string as a Uint8Array assuming latin1 (ISO-8859-1)
-        const bytes = new Uint8Array(headerValue.split('').map(c => c.charCodeAt(0)));
-        // Decode as UTF-8
-        return new TextDecoder('utf-8').decode(bytes);
-    } catch (_e) {
-        // Fall back to original
-        return headerValue;
-    }
-}
-
 export default {
 	async fetch(request: Request, env: Env): Promise<Response> {
 		if (request.method === "OPTIONS") {
@@ -56,23 +40,21 @@ export default {
 		    });
 		}
         // --- API Key Authentication ---
-        // In a real app, use `env.API_KEY` after setting it as a secret in your Worker's settings
         const providedKey = request.headers.get('X-API-Key');
         if (providedKey !== API_KEY) {
             return errorResponse('Unauthorized. Invalid or missing API Key.', 401);
         }
 
-        // Decode event key header
-        const rawEventKey = request.headers.get('X-Event-Key');
-        const eventKey = decodeHeaderValue(rawEventKey);
-
+        // Assume event key is URL-encoded in header
+        const eventKeyHeader = request.headers.get('X-Event-Key');
+        const eventKey = eventKeyHeader ? decodeURIComponent(eventKeyHeader) : null;
 		if (eventKey !== EVENT_KEY) {
             return errorResponse('Unauthorized. Invalid or missing Event Key.', 401);
 		}
         // --- End of Authentication ---
 
 		const { pathname } = new URL(request.url);
-		const pathParts = pathname.split('/').filter(p => p); // e.g., ['api', 'presenters', '1']
+		const pathParts = pathname.split('/').filter(p => p);
 
 		// We expect requests to be in the format /api/presenters/:id
 		if (pathParts.length < 2 || pathParts[0] !== 'api' || pathParts[1] !== 'presenters') {
@@ -112,7 +94,6 @@ export default {
 					} else {
 						return errorResponse('Failed to add presenter.', 500);
 					}
-
 
 				case 'PUT':
 					// Update an existing presenter
