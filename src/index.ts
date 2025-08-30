@@ -11,7 +11,7 @@ const API_KEY = "a5d1bdba-ee88-46f2-a62e-2d0edb159a21";
 const EVENT_KEY = "PÄRNU25"
 
 const corsHeaders = {
-  'Access-Control-Allow-Headers': '*', // What headers are allowed. * is wildcard. Instead of using '*', you can specify a list of specific headers that are allowed, such as: Access-Control-Allow-Headers: X-Requested-With, Content-Type, Accept, Authorization.
+  'Access-Control-Allow-Headers': '*', // What headers are allowed. * is wildcard. Instead of using '*', you can specify a list of specific headers that are allowed, such as: Access-Control-Allow-Head[...]
   'Access-Control-Allow-Methods': 'GET, POST, PUT, DELETE, OPTIONS',
   'Access-Control-Allow-Origin': '*', // This is URLs that are allowed to access the server. * is the wildcard character meaning any URL can.
 }
@@ -32,6 +32,22 @@ const errorResponse = (message: string, status = 400) => {
 	return jsonResponse({ error: message }, status);
 };
 
+// Helper: decode incoming event key header as UTF-8
+function decodeHeaderValue(headerValue: string | null): string | null {
+    if (!headerValue) return null;
+    try {
+        // If the headerValue contains bytes (e.g. \xc4) instead of actual unicode chars,
+        // decode using TextDecoder from percent-encoding.
+        // First, encode the string as a Uint8Array assuming latin1 (ISO-8859-1)
+        const bytes = new Uint8Array(headerValue.split('').map(c => c.charCodeAt(0)));
+        // Decode as UTF-8
+        return new TextDecoder('utf-8').decode(bytes);
+    } catch (_e) {
+        // Fall back to original
+        return headerValue;
+    }
+}
+
 export default {
 	async fetch(request: Request, env: Env): Promise<Response> {
 		if (request.method === "OPTIONS") {
@@ -45,7 +61,11 @@ export default {
         if (providedKey !== API_KEY) {
             return errorResponse('Unauthorized. Invalid or missing API Key.', 401);
         }
-		const eventKey = request.headers.get('X-Event-Key');
+
+        // Decode event key header
+        const rawEventKey = request.headers.get('X-Event-Key');
+        const eventKey = decodeHeaderValue(rawEventKey);
+
 		if (eventKey !== EVENT_KEY) {
             return errorResponse('Unauthorized. Invalid or missing Event Key.', 401);
 		}
