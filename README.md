@@ -1,10 +1,15 @@
 # Worker + D1 Database API Example
 
-This project demonstrates a Cloudflare Worker with a D1 database binding for a sample "presenters" API. All endpoints require the following API key header:
+This project demonstrates a Cloudflare Worker with a D1 database binding for a sample "presenters" API. All endpoints require **two** HTTP headers:
 
 ```
 X-API-Key: a5d1bdba-ee88-46f2-a62e-2d0edb159a21
+X-Event-Key: PÄRNU25
 ```
+
+- The `X-API-Key` is the authentication key for access.
+- The `X-Event-Key` must be set to `PÄRNU25`.  
+  You can change the required event key directly in [`src/index.ts`](src/index.ts).
 
 Replace `https://vision-2026-call-for-presenters-backend.cloudflare-one-offs.workers.dev` in the examples below with your deployed Worker URL, or use `http://localhost:8787` if running locally.
 
@@ -22,14 +27,16 @@ Replace `https://vision-2026-call-for-presenters-backend.cloudflare-one-offs.wor
 
 ```sh
 curl -X GET https://vision-2026-call-for-presenters-backend.cloudflare-one-offs.workers.dev/api/presenters \
-  -H "X-API-Key: a5d1bdba-ee88-46f2-a62e-2d0edb159a21"
+  -H "X-API-Key: a5d1bdba-ee88-46f2-a62e-2d0edb159a21" \
+  -H "X-Event-Key: PÄRNU25"
 ```
 
 ### Get presenter with ID 1
 
 ```sh
 curl -X GET https://vision-2026-call-for-presenters-backend.cloudflare-one-offs.workers.dev/api/presenters/1 \
-  -H "X-API-Key: a5d1bdba-ee88-46f2-a62e-2d0edb159a21"
+  -H "X-API-Key: a5d1bdba-ee88-46f2-a62e-2d0edb159a21" \
+  -H "X-Event-Key: PÄRNU25"
 ```
 
 ### Add a presenter
@@ -37,6 +44,7 @@ curl -X GET https://vision-2026-call-for-presenters-backend.cloudflare-one-offs.
 ```sh
 curl -X POST https://vision-2026-call-for-presenters-backend.cloudflare-one-offs.workers.dev/api/presenters \
   -H "X-API-Key: a5d1bdba-ee88-46f2-a62e-2d0edb159a21" \
+  -H "X-Event-Key: PÄRNU25" \
   -H "Content-Type: application/json" \
   --data '{"name":"Ada Lovelace", "topic":"Computing", "bio":"The first programmer."}'
 ```
@@ -46,6 +54,7 @@ curl -X POST https://vision-2026-call-for-presenters-backend.cloudflare-one-offs
 ```sh
 curl -X PUT https://vision-2026-call-for-presenters-backend.cloudflare-one-offs.workers.dev/api/presenters/1 \
   -H "X-API-Key: a5d1bdba-ee88-46f2-a62e-2d0edb159a21" \
+  -H "X-Event-Key: PÄRNU25" \
   -H "Content-Type: application/json" \
   --data '{"name":"Ada Lovelace", "topic":"Math & Computing", "bio":"Pioneer in computer science."}'
 ```
@@ -54,12 +63,13 @@ curl -X PUT https://vision-2026-call-for-presenters-backend.cloudflare-one-offs.
 
 ```sh
 curl -X DELETE https://vision-2026-call-for-presenters-backend.cloudflare-one-offs.workers.dev/api/presenters/1 \
-  -H "X-API-Key: a5d1bdba-ee88-46f2-a62e-2d0edb159a21"
+  -H "X-API-Key: a5d1bdba-ee88-46f2-a62e-2d0edb159a21" \
+  -H "X-Event-Key: PÄRNU25"
 ```
 
 ---
 
-All endpoints return JSON. The sample API key and fields are hardcoded for demonstration.
+All endpoints return JSON. The sample API key and event key are hardcoded for demonstration and can be changed in the code.
 
 ## Setup & Deploy
 
