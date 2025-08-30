@@ -7,6 +7,8 @@ export interface Env {
 
 // The secret API key
 const API_KEY = "a5d1bdba-ee88-46f2-a62e-2d0edb159a21";
+// The event specific key
+const EVENT_KEY = "PÄRNU26"
 
 const corsHeaders = {
   'Access-Control-Allow-Headers': '*', // What headers are allowed. * is wildcard. Instead of using '*', you can specify a list of specific headers that are allowed, such as: Access-Control-Allow-Headers: X-Requested-With, Content-Type, Accept, Authorization.
@@ -43,6 +45,10 @@ export default {
         if (providedKey !== API_KEY) {
             return errorResponse('Unauthorized. Invalid or missing API Key.', 401);
         }
+		const eventKey = request.headers.get('X-Event-Key');
+		if (eventKey !== EVENT_KEY) {
+            return errorResponse('Unauthorized. Invalid or missing Event Key.', 401);
+		}
         // --- End of Authentication ---
 
 		const { pathname } = new URL(request.url);
